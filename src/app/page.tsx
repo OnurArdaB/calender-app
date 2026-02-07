@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Calendar from '@/components/Calendar';
 import BridgeCalculator from '@/components/BridgeCalculator';
+import BridgeSuggestions from '@/components/BridgeSuggestions';
 import HolidayList from '@/components/HolidayList';
 
 export default function Home() {
@@ -22,6 +23,14 @@ export default function Home() {
 
   const handleClearAll = () => {
     setSelectedDates(new Set());
+  };
+
+  const handleApplySuggestion = (days: string[]) => {
+    setSelectedDates(prev => {
+      const newSet = new Set(prev);
+      days.forEach(day => newSet.add(day));
+      return newSet;
+    });
   };
 
   return (
@@ -56,8 +65,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Alt: Tatil Listesi */}
-        <div className="mt-8">
+        {/* Alt: Öneriler ve Tatil Listesi */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <BridgeSuggestions
+            selectedDates={selectedDates}
+            onApplySuggestion={handleApplySuggestion}
+          />
           <HolidayList />
         </div>
       </main>
