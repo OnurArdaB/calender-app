@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Calendar from '@/components/Calendar';
 import BridgeCalculator from '@/components/BridgeCalculator';
 import BridgeSuggestions from '@/components/BridgeSuggestions';
@@ -87,8 +88,18 @@ export default function Home() {
       </div>
 
       <footer className="bg-white border-t mt-12">
-        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
-          2026 Türkiye Resmi Tatil Takvimi - Özel Sektör
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mb-4">
+            <Link href="/" className="hover:text-blue-600">Ana Sayfa</Link>
+            <Link href="/hakkimizda" className="hover:text-blue-600">Hakkımızda</Link>
+            <Link href="/iletisim" className="hover:text-blue-600">İletişim</Link>
+            <Link href="/gizlilik" className="hover:text-blue-600">Gizlilik Politikası</Link>
+            <Link href="/sss" className="hover:text-blue-600">SSS</Link>
+            <Link href="/blog" className="hover:text-blue-600">Blog</Link>
+          </div>
+          <p className="text-center text-gray-500 text-sm">
+            © 2026 Türkiye Tatil Takvimi. Tüm hakları saklıdır.
+          </p>
         </div>
       </footer>
     </div>
