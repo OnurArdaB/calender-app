@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { holidays2026, isHoliday, isWeekend, Holiday } from '@/data/holidays';
+import { isHoliday, isWeekend } from '@/data/holidays';
 
 interface CalendarProps {
   selectedDates: Set<string>;
   onDateToggle: (date: string) => void;
+  year: number;
 }
 
 const MONTHS = [
@@ -15,9 +16,8 @@ const MONTHS = [
 
 const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
-export default function Calendar({ selectedDates, onDateToggle }: CalendarProps) {
+export default function Calendar({ selectedDates, onDateToggle, year }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(0);
-  const year = 2026;
 
   const getDaysInMonth = (month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -46,7 +46,7 @@ export default function Calendar({ selectedDates, onDateToggle }: CalendarProps)
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = formatDate(month, day);
       const date = new Date(year, month, day);
-      const holiday = isHoliday(date);
+      const holiday = isHoliday(date, year);
       const weekend = isWeekend(date);
       const isSelected = selectedDates.has(dateStr);
 

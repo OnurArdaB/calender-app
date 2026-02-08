@@ -1,10 +1,16 @@
 'use client';
 
-import { holidays2026 } from '@/data/holidays';
+import { getHolidaysForYear, Holiday } from '@/data/holidays';
+
+interface HolidayListProps {
+  year: number;
+}
 
 const DAYS_TR = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
-export default function HolidayList() {
+export default function HolidayList({ year }: HolidayListProps) {
+  const holidays = getHolidaysForYear(year);
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' });
@@ -16,9 +22,9 @@ export default function HolidayList() {
   };
 
   // Tatilleri grupla
-  const groupedHolidays: { [key: string]: typeof holidays2026 } = {};
+  const groupedHolidays: { [key: string]: Holiday[] } = {};
 
-  for (const holiday of holidays2026) {
+  for (const holiday of holidays) {
     const baseName = holiday.name.replace(/ Arifesi$/, '').replace(/ \d\. Gün$/, '');
     if (!groupedHolidays[baseName]) {
       groupedHolidays[baseName] = [];
@@ -28,7 +34,7 @@ export default function HolidayList() {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">2026 Resmi Tatiller</h2>
+      <h2 className="text-xl font-bold text-gray-800 mb-6">{year} Resmi Tatiller</h2>
 
       <div className="space-y-4">
         {Object.entries(groupedHolidays).map(([name, days]) => {
@@ -84,7 +90,7 @@ export default function HolidayList() {
         <div className="flex justify-between items-center">
           <span className="font-medium text-gray-700">Toplam Resmi Tatil</span>
           <span className="text-2xl font-bold text-gray-800">
-            {holidays2026.reduce((sum, h) => sum + h.duration, 0)} gün
+            {holidays.reduce((sum, h) => sum + h.duration, 0)} gün
           </span>
         </div>
       </div>

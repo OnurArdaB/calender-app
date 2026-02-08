@@ -1,23 +1,29 @@
 'use client';
 
-import { bridgeSuggestions, BridgeSuggestion } from '@/data/bridgeSuggestions';
+import { getSuggestionsForYear, getTotalVacationDays, BridgeSuggestion } from '@/data/bridgeSuggestions';
 
 interface BridgeSuggestionsProps {
   selectedDates: Set<string>;
   onApplySuggestion: (days: string[]) => void;
+  year: number;
 }
 
-export default function BridgeSuggestions({ selectedDates, onApplySuggestion }: BridgeSuggestionsProps) {
+export default function BridgeSuggestions({ selectedDates, onApplySuggestion, year }: BridgeSuggestionsProps) {
+  const suggestions = getSuggestionsForYear(year);
+  const totals = getTotalVacationDays(year);
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
   };
 
   const isApplied = (suggestion: BridgeSuggestion) => {
+    if (suggestion.bridgeDays.length === 0) return false;
     return suggestion.bridgeDays.every(day => selectedDates.has(day));
   };
 
   const getEfficiencyColor = (efficiency: number) => {
+    if (efficiency === Infinity) return 'bg-green-100 text-green-800';
     if (efficiency >= 5) return 'bg-green-100 text-green-800';
     if (efficiency >= 3) return 'bg-blue-100 text-blue-800';
     if (efficiency >= 2) return 'bg-yellow-100 text-yellow-800';
@@ -33,11 +39,22 @@ export default function BridgeSuggestions({ selectedDates, onApplySuggestion }: 
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h2 className="text-xl font-bold text-gray-800 mb-2">Köprü İzni Önerileri</h2>
       <p className="text-sm text-gray-500 mb-4">
-        En verimli köprü izinleri (verimlilik = toplam tatil / izin günü)
+        {year} yılı için en verimli köprü izinleri
       </p>
 
+      {/* Özet */}
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6">
+        <div className="text-center">
+          <div className="text-3xl font-bold text-green-600">{totals.totalDays} gün</div>
+          <div className="text-sm text-gray-600">toplam tatil</div>
+          <div className="text-xs text-gray-500 mt-1">
+            ({totals.bridgeDays} gün köprü izni ile)
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-3">
-        {bridgeSuggestions.map((suggestion) => {
+        {suggestions.map((suggestion) => {
           const applied = isApplied(suggestion);
 
           return (
@@ -89,7 +106,7 @@ export default function BridgeSuggestions({ selectedDates, onApplySuggestion }: 
                         : 'bg-blue-500 text-white hover:bg-blue-600'
                     }`}
                   >
-                    {applied ? '✓ Uygulandı' : 'Uygula'}
+                    {applied ? '✓' : 'Uygula'}
                   </button>
                 )}
               </div>
@@ -101,18 +118,18 @@ export default function BridgeSuggestions({ selectedDates, onApplySuggestion }: 
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="font-semibold text-gray-700 mb-2">Tüm Önerileri Uygula</h3>
         <p className="text-sm text-gray-500 mb-3">
-          En verimli önerileri seçerek maksimum tatil yapın
+          Tüm köprü izinlerini seçerek maksimum tatil yapın
         </p>
         <button
           onClick={() => {
-            const topSuggestions = bridgeSuggestions
-              .filter(s => s.efficiency >= 4 && s.bridgeDays.length > 0)
+            const allBridgeDays = suggestions
+              .filter(s => s.bridgeDays.length > 0)
               .flatMap(s => s.bridgeDays);
-            onApplySuggestion([...new Set(topSuggestions)]);
+            onApplySuggestion([...new Set(allBridgeDays)]);
           }}
           className="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all"
         >
-          Yüksek Verimli Önerileri Uygula (4x+)
+          Tüm Köprü İzinlerini Uygula ({totals.bridgeDays} gün)
         </button>
       </div>
     </div>

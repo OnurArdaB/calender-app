@@ -1,10 +1,11 @@
 'use client';
 
-import { holidays2026, isHoliday, isWeekend } from '@/data/holidays';
+import { getHolidaysForYear, isHoliday, isWeekend } from '@/data/holidays';
 
 interface BridgeCalculatorProps {
   selectedDates: Set<string>;
   onClearAll: () => void;
+  year: number;
 }
 
 interface VacationPeriod {
@@ -16,31 +17,28 @@ interface VacationPeriod {
   weekendDays: number;
 }
 
-export default function BridgeCalculator({ selectedDates, onClearAll }: BridgeCalculatorProps) {
-  const totalHolidayDays = holidays2026.reduce((sum, h) => sum + h.duration, 0);
+export default function BridgeCalculator({ selectedDates, onClearAll, year }: BridgeCalculatorProps) {
+  const holidays = getHolidaysForYear(year);
+  const totalHolidayDays = holidays.reduce((sum, h) => sum + h.duration, 0);
   const bridgeDaysCount = selectedDates.size;
 
-  // Tatil dönemlerini hesapla
   const calculateVacationPeriods = (): VacationPeriod[] => {
     if (selectedDates.size === 0) return [];
 
     const allDates = new Set<string>();
 
-    // Tüm önemli günleri ekle (tatiller, hafta sonları, köprü izinleri)
-    const year = 2026;
     for (let month = 0; month < 12; month++) {
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-        if (isHoliday(date) || isWeekend(date) || selectedDates.has(dateStr)) {
+        if (isHoliday(date, year) || isWeekend(date) || selectedDates.has(dateStr)) {
           allDates.add(dateStr);
         }
       }
     }
 
-    // Ardışık günleri grupla
     const sortedDates = Array.from(allDates).sort();
     const periods: VacationPeriod[] = [];
     let currentPeriod: string[] = [];
@@ -78,7 +76,7 @@ export default function BridgeCalculator({ selectedDates, onClearAll }: BridgeCa
 
     for (const dateStr of dates) {
       const date = new Date(dateStr);
-      const holiday = isHoliday(date);
+      const holiday = isHoliday(date, year);
 
       if (holiday) {
         holidayDays += holiday.duration;

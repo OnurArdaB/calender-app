@@ -6,10 +6,17 @@ import Calendar from '@/components/Calendar';
 import BridgeCalculator from '@/components/BridgeCalculator';
 import BridgeSuggestions from '@/components/BridgeSuggestions';
 import HolidayList from '@/components/HolidayList';
+import YearSelector from '@/components/YearSelector';
 import AdBanner from '@/components/AdBanner';
 
 export default function Home() {
+  const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    setSelectedDates(new Set()); // Yıl değiştiğinde seçimleri temizle
+  };
 
   const handleDateToggle = (date: string) => {
     setSelectedDates(prev => {
@@ -39,12 +46,20 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Türkiye Tatil Takvimi 2026
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Köprü izinlerinizi planlayın, tatil günlerinizi hesaplayın
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Türkiye Tatil Takvimi {selectedYear}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Köprü izinlerinizi planlayın, tatil günlerinizi hesaplayın
+              </p>
+            </div>
+            <YearSelector
+              selectedYear={selectedYear}
+              onYearChange={handleYearChange}
+            />
+          </div>
         </div>
       </header>
 
@@ -60,6 +75,7 @@ export default function Home() {
             <Calendar
               selectedDates={selectedDates}
               onDateToggle={handleDateToggle}
+              year={selectedYear}
             />
           </div>
 
@@ -68,6 +84,7 @@ export default function Home() {
             <BridgeCalculator
               selectedDates={selectedDates}
               onClearAll={handleClearAll}
+              year={selectedYear}
             />
           </div>
         </div>
@@ -77,8 +94,9 @@ export default function Home() {
           <BridgeSuggestions
             selectedDates={selectedDates}
             onApplySuggestion={handleApplySuggestion}
+            year={selectedYear}
           />
-          <HolidayList />
+          <HolidayList year={selectedYear} />
         </div>
       </main>
 
@@ -98,7 +116,7 @@ export default function Home() {
             <Link href="/blog" className="hover:text-blue-600">Blog</Link>
           </div>
           <p className="text-center text-gray-500 text-sm">
-            © 2026 Türkiye Tatil Takvimi. Tüm hakları saklıdır.
+            © {selectedYear} Türkiye Tatil Takvimi. Tüm hakları saklıdır.
           </p>
         </div>
       </footer>
