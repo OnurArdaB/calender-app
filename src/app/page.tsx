@@ -5,6 +5,7 @@ import Calendar from '@/components/Calendar';
 import BridgeCalculator from '@/components/BridgeCalculator';
 import BridgeSuggestions from '@/components/BridgeSuggestions';
 import HolidayList from '@/components/HolidayList';
+import AdBanner from '@/components/AdBanner';
 
 export default function Home() {
   const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
@@ -46,6 +47,11 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Üst Reklam */}
+      <div className="max-w-7xl mx-auto px-4 pt-4">
+        <AdBanner />
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Sol: Takvim */}
@@ -74,6 +80,11 @@ export default function Home() {
           <HolidayList />
         </div>
       </main>
+
+      {/* Alt Reklam */}
+      <div className="max-w-7xl mx-auto px-4 pb-4">
+        <AdBanner />
+      </div>
 
       <footer className="bg-white border-t mt-12">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
